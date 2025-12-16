@@ -1,19 +1,49 @@
 import React, { useState } from "react";
+import { ArrowUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Footer() {
   const [openMenu, setOpenMenu] = useState(null);
+  const navigate = useNavigate();
 
   const toggleMenu = (menu) => {
     setOpenMenu(openMenu === menu ? null : menu);
   };
 
+  // 🔝 BACK TO TOP (MANUAL)
+  const handleBackToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // 🔁 NAV + SCROLL TO TOP
+  const navigateWithTop = (path) => {
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <footer className="bg-black text-gray-300 py-12 px-6">
-      
-      {/* Top Email Subscription */}
+    <footer className="bg-black text-gray-300 py-12 px-6 relative">
+
+      {/* 🔝 BACK TO TOP BUTTON */}
+      <button
+        onClick={handleBackToTop}
+        className="absolute top-6 right-6
+                   flex items-center gap-2
+                   bg-white text-black
+                   px-4 py-2 rounded-full
+                   font-semibold text-sm
+                   shadow-lg
+                   hover:scale-105 hover:bg-gray-200
+                   transition"
+      >
+        <ArrowUp size={16} />
+        Back to Top
+      </button>
+
       <div className="max-w-6xl mx-auto">
         <h1 className="text-white text-2xl font-semibold mb-4">REVE CULT</h1>
 
+        {/* EMAIL */}
         <div className="flex flex-col md:flex-row md:items-center md:gap-4 mb-12">
           <p className="text-gray-400 mb-2 md:mb-0">
             Receive the latest updates from Reve Cult
@@ -29,112 +59,146 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Middle Section (DESKTOP View) */}
+        {/* ================= DESKTOP ================= */}
         <div className="hidden md:grid grid-cols-4 gap-12 border-t border-gray-800 pt-10 pb-10">
 
-          {/* Column 1 */}
+          {/* SHOP */}
           <div>
             <h3 className="text-white font-semibold mb-4">Shop</h3>
             <ul className="space-y-2">
-              <li>All Products</li>
-              <li>Wireless Earbuds</li>
-              <li>Sports Collection</li>
-              <li>Premium Series</li>
+              {[
+                "All Products",
+                "Wireless Earbuds",
+                "Sports Collection",
+                "Premium Series",
+              ].map((item) => (
+                <li
+                  key={item}
+                  onClick={() => navigateWithTop("/shop")}
+                  className="cursor-pointer hover:text-white transition"
+                >
+                  {item}
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Column 2 */}
+          {/* SUPPORT */}
           <div>
             <h3 className="text-white font-semibold mb-4">Support</h3>
             <ul className="space-y-2">
-              <li>Contact Us</li>
-              <li>FAQs</li>
-              <li>Shipping Info</li>
-              <li>Returns & Exchanges</li>
-              <li>Warranty</li>
-              <li>Size Guide</li>
+              {[
+                "Contact Us",
+                "FAQs",
+                "Shipping Info",
+                "Returns & Exchanges",
+                "Warranty",
+                "Size Guide",
+              ].map((item) => (
+                <li
+                  key={item}
+                  onClick={() => navigateWithTop("/support")}
+                  className="cursor-pointer hover:text-white transition"
+                >
+                  {item}
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Column 3 */}
+          {/* OFFERS */}
           <div>
             <h3 className="text-white font-semibold mb-4">Shop by Offers</h3>
             <ul className="space-y-2">
-              <li>Reve Exclusive Offers</li>
-              <li>Festival Deals</li>
-              <li>Gift Store</li>
+              {[
+                "Reve Exclusive Offers",
+                "Festival Deals",
+                "Gift Store",
+              ].map((item) => (
+                <li
+                  key={item}
+                  onClick={() => navigateWithTop("/shop")}
+                  className="cursor-pointer hover:text-white transition"
+                >
+                  {item}
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Column 4 */}
+          {/* CATEGORY */}
           <div>
             <h3 className="text-white font-semibold mb-4">Shop by Category</h3>
             <ul className="space-y-2">
-              <li>Wireless Earbuds</li>
-              <li>Power Bank</li>
-              <li>Headphones</li>
-              <li>Accessories</li>
+              {[
+                "Wireless Earbuds",
+                "Power Bank",
+                "Headphones",
+                "Accessories",
+              ].map((item) => (
+                <li
+                  key={item}
+                  onClick={() => navigateWithTop("/shop")}
+                  className="cursor-pointer hover:text-white transition"
+                >
+                  {item}
+                </li>
+              ))}
             </ul>
           </div>
-
         </div>
 
-        {/* Mobile Accordion Section */}
+        {/* ================= MOBILE ================= */}
         <div className="md:hidden border-t border-gray-800">
-          
-          {/* Menu 1 */}
-          <div onClick={() => toggleMenu(1)} className="py-4 border-b border-gray-800 cursor-pointer">
-            <div className="flex justify-between items-center">
-              <h3 className="text-white text-lg">Our Products</h3>
-              <span>{openMenu === 1 ? "−" : "+"}</span>
+          {[1, 2, 3].map((menu) => (
+            <div
+              key={menu}
+              onClick={() => toggleMenu(menu)}
+              className="py-4 border-b border-gray-800 cursor-pointer"
+            >
+              <div className="flex justify-between items-center">
+                <h3 className="text-white text-lg">
+                  {menu === 1 && "Our Products"}
+                  {menu === 2 && "About Reve Cult"}
+                  {menu === 3 && "Support"}
+                </h3>
+                <span>{openMenu === menu ? "−" : "+"}</span>
+              </div>
+
+              {openMenu === menu && (
+                <ul className="pl-3 mt-3 space-y-2">
+                  {menu !== 3 &&
+                    ["Wireless Earbuds", "Headphones", "Accessories"].map(
+                      (item) => (
+                        <li
+                          key={item}
+                          onClick={() => navigateWithTop("/shop")}
+                          className="hover:text-white transition"
+                        >
+                          {item}
+                        </li>
+                      )
+                    )}
+
+                  {menu === 3 &&
+                    ["Contact Us", "FAQs", "Warranty"].map((item) => (
+                      <li
+                        key={item}
+                        onClick={() => navigateWithTop("/support")}
+                        className="hover:text-white transition"
+                      >
+                        {item}
+                      </li>
+                    ))}
+                </ul>
+              )}
             </div>
-
-            {openMenu === 1 && (
-              <ul className="pl-3 mt-3 space-y-2">
-                <li>Smart Watches</li>
-                <li>Wireless Earbuds</li>
-                <li>Headphones</li>
-              </ul>
-            )}
-          </div>
-
-          {/* Menu 2 */}
-          <div onClick={() => toggleMenu(2)} className="py-4 border-b border-gray-800 cursor-pointer">
-            <div className="flex justify-between items-center">
-              <h3 className="text-white text-lg">About Reve Cult</h3>
-              <span>{openMenu === 2 ? "−" : "+"}</span>
-            </div>
-
-            {openMenu === 2 && (
-              <ul className="pl-3 mt-3 space-y-2">
-                <li>Company Info</li>
-                <li>Newsroom</li>
-                <li>Careers</li>
-              </ul>
-            )}
-          </div>
-
-          {/* Menu 3 */}
-          <div onClick={() => toggleMenu(3)} className="py-4 border-b border-gray-800 cursor-pointer">
-            <div className="flex justify-between items-center">
-              <h3 className="text-white text-lg">Support</h3>
-              <span>{openMenu === 3 ? "−" : "+"}</span>
-            </div>
-
-            {openMenu === 3 && (
-              <ul className="pl-3 mt-3 space-y-2">
-                <li>Help Center</li>
-                <li>Track Order</li>
-                <li>Warranty</li>
-              </ul>
-            )}
-          </div>
-
+          ))}
         </div>
 
-        {/* Bottom Line */}
+        {/* COPYRIGHT */}
         <div className="text-center text-gray-500 text-sm mt-10 border-t border-gray-800 pt-6">
-          Copyright © {new Date().getFullYear()} REVE CULT. All Rights Reserved.
+          © {new Date().getFullYear()} REVE CULT. All Rights Reserved.
         </div>
       </div>
     </footer>

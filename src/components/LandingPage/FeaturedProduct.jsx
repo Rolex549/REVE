@@ -1,137 +1,125 @@
 import React from "react";
 import { motion } from "framer-motion";
-import img1 from "../../assets/TWS 600(3) original.png";
-import img2 from "../../assets/TWS 600(2) original.png";
-import img3 from "../../assets/TWS 600 (1) original.png";
-import img4 from "../../assets/SOUL(2) original.png";
-import img5 from "../../assets/REVE TONE Cyan.png";
-import img6 from "../../assets/hero woman.png";
-import img7 from "../../assets/hero woman-3.png";
+import { useNavigate } from "react-router-dom";
+import products from "../products";
 
-import img9 from "../../assets/earbuds2.png";
-import img10 from "../../assets/BUDS TONE white.png";
-import img11 from "../../assets/BUDS TONE original.png";
-import img12 from "../../assets/BUDS TONE black original.png";
-
-// 👉 Copy the products array from Products.jsx and paste it here:
-const products = [
-  {
-    id: 1,
-    name: "TWS 600",
-    colors: [
-      { name: "Blue", hex: "#4A90E2", image: img1 },
-      { name: "Black", hex: "#1a1a1a", image: img2 },
-      { name: "White", hex: "#F5F5F5", image: img3 },
-    ],
-    rating: 4.6,
-    reviews: 2847,
-    salePrice: 999,
-    features: ["Active Noise Cancellation", "40H Playback", "Fast Charging"]
-  },
-  {
-    id: 2,
-    name: "TWS 600",
-    colors: [
-      { name: "Blue", hex: "#4A90E2", image: img4 },
-      { name: "Black", hex: "#1a1a1a", image: img5 },
-      { name: "White", hex: "#F5F5F5", image: img6 },
-    ],
-    rating: 4.6,
-    reviews: 2847,
-    salePrice: 999,
-    features: ["Active Noise Cancellation", "40H Playback", "Fast Charging"]
-  },
-  {
-    id: 3,
-    name: "SOUL",
-    colors: [
-      { name: "Navy", hex: "#001F3F", image: img10 },
-      { name: "Black", hex: "#1a1a1a", image: img7 },
-    ],
-    rating: 4.5,
-    reviews: 1892,
-    salePrice: 999,
-    features: ["Premium Bass", "35H Battery Life", "Voice Assistant"]
-  },
-  {
-    id: 4,
-    name: "BUDS TONE",
-    colors: [
-      { name: "Cream", hex: "#F5E6D3", image: img9 },
-      { name: "Black", hex: "#1a1a1a", image: img10 },
-      { name: "Cyan", hex: "#00FFFF", image: img11 },
-      { name: "white", hex: "#F5F5F5", image: img12 }
-    ],
-    rating: 4.7,
-    reviews: 4163,
-    salePrice: 1499,
-    features: ["Spatial Audio", "Transparency Mode", "Wireless Charging"]
-  },
-
-];
+// 🎥 VIDEOS
+import video1 from "../../assets/v1.mp4";
+import video2 from "../../assets/v2.mp4";
+import video3 from "../../assets/v3.mp4";
 
 export default function FeaturedProduct() {
-  return (
-    <div className="w-full max-h-800 mt-10  px-6 py-10">
-      <h1 className="text-4xl font-bold mb-8">Recommended</h1>
+  const navigate = useNavigate();
 
-      <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4 gap-10">
-        {products.map((item) => (
+  return (
+    <div className="w-full mt-10 px-6 py-10">
+
+      {/* ================= FEATURED PRODUCTS ================= */}
+      <h1 className="text-4xl font-bold mb-10">Recommended</h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        {products.slice(0, 4).map((item) => (
           <motion.div
             key={item.id}
-            className="group p-6 rounded-xl border bg-white transition-all duration-300 cursor-pointer"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+            onClick={() => navigate(`/product/${item.id}`)}
+            className="group p-6 rounded-xl border bg-white cursor-pointer"
+            whileHover={{ y: -6 }}
           >
-            {/* IMAGE + SHADOW */}
-            <div className="relative w-full h-60 flex justify-center items-center">
-              <div className="absolute bottom-0 w-32 h-3 bg-gray-300 rounded-full opacity-0 group-hover:opacity-60 transition-all duration-300 blur-md"></div>
-
+            <div className="w-full h-40 flex items-center justify-center mb-4">
               <img
-                src={item.colors[0].image}
+                src={item.image}
                 alt={item.name}
-                className="w-full h-40 object-contain mb-6 transform transition-all duration-300 group-hover:-translate-y-2"
+                className="w-full h-full object-contain"
               />
             </div>
 
-            {/* Color Label */}
-            <p className="text-sm font-semibold">
-              Color: <span className="font-normal">{item.colors[0].name}</span>
+            <p className="text-lg font-semibold">{item.name}</p>
+
+            <p className="text-md font-bold mt-2 text-pink-600">
+              Rs. {item.salePrice}
             </p>
 
-            {/* Color Circles */}
-            <div className="flex gap-3 my-3">
-              {item.colors.map((clr, i) => (
-                <div
-                  key={i}
-                  className="w-8 h-8 rounded-full border cursor-pointer 
-                 transition-all duration-300 transform hover:scale-125"
-                  style={{ background: clr.hex }}
-                ></div>
-              ))}
-            </div>
-
-
-            {/* Name */}
-            <p className="text-lg font-semibold leading-tight">{item.name}</p>
-
-            {/* PRICE → Hides on hover */}
-            {/* PRICE → Hides on hover */}
-            <p className="text-md font-semibold mt-2 group-hover:hidden transition-all">
-              ₹{item.salePrice}
-            </p>
-
-            {/* ADD TO CART → Shows on hover */}
-            <button className="hidden group-hover:block w-full mt-2 py-3 rounded-lg font-semibold transition-all duration-300 hover:bg-black hover:text-white">
-              ADD TO CART
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/product/${item.id}`);
+              }}
+              className="hidden group-hover:block w-full mt-3 py-2 rounded-lg font-semibold border hover:bg-black hover:text-white"
+            >
+              VIEW DETAILS
             </button>
-
           </motion.div>
-
-
         ))}
       </div>
+
+      {/* ================= 3 VIDEO SECTIONS (SIDE BY SIDE) ================= */}
+      <div className="mt-24 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <VideoCard
+          video={video1}
+          title="Where Sound Meets Soul"
+          subtitle="Premium sound. Bold identity."
+          onClick={() => navigate("/shop")}
+        />
+
+        <VideoCard
+          video={video2}
+          title="Designed for Comfort"
+          subtitle="All-day wear. Zero compromise."
+          onClick={() => navigate("/shop")}
+        />
+
+        <VideoCard
+          video={video3}
+          title="Sound That Defines You"
+          subtitle="Not just audio. An attitude."
+          onClick={() => navigate("/shop")}
+        />
+
+      </div>
+
+    </div>
+  );
+}
+
+/* ================= VIDEO CARD COMPONENT ================= */
+function VideoCard({ video, title, subtitle, onClick }) {
+  return (
+    <div className="relative h-[260px] rounded-2xl overflow-hidden bg-black group">
+
+      {/* 🎥 VIDEO */}
+      <video
+        src={video}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="
+          absolute inset-0
+          w-full h-full
+          object-cover
+          scale-110
+          group-hover:scale-125
+          transition duration-700
+        "
+      />
+
+      {/* OVERLAY */}
+      <div className="absolute inset-0 bg-black/45 group-hover:bg-black/55 transition" />
+
+      {/* CONTENT */}
+      <div className="relative z-10 h-full flex flex-col justify-center px-6 text-white">
+        <h3 className="text-2xl font-bold mb-2">{title}</h3>
+        <p className="text-white/80 mb-4">{subtitle}</p>
+
+        <button
+          onClick={onClick}
+          className="w-fit px-5 py-2 bg-white text-black rounded-lg font-semibold hover:scale-105 transition"
+        >
+          SHOP NOW
+        </button>
+      </div>
+
     </div>
   );
 }
