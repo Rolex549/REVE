@@ -36,6 +36,8 @@ import CreditCard from "./components/payment/CreditCard";
 import Rupay from "./components/payment/Rupay";
 import NetBanking from "./components/payment/NetBanking";
 import CashOnDelivery from "./components/payment/CashOnDelivery";
+import OrderSuccess from "./components/payment/OrderSuccess";
+
 
 const App = () => {
   return (
@@ -83,6 +85,8 @@ const App = () => {
             <Route path="/payment/rupay" element={<Rupay />} />
             <Route path="/payment/netbanking" element={<NetBanking />} />
             <Route path="/payment/cod" element={<CashOnDelivery />} />
+            <Route path="/order-success" element={<OrderSuccess />} />
+
 
             {/* ================= 404 ================= */}
             <Route
