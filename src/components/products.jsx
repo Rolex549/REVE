@@ -1,6 +1,6 @@
 import img1 from "../assets/e1.jpg";
 import img2 from "../assets/e2.jpg";
-import img3 from "../assets/e3.jpg";
+import img3 from "../assets/e3.jpeg";
 import img4 from "../assets/e4.jpg";
 
 const products = [

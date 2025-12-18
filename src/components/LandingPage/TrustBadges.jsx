@@ -7,18 +7,18 @@ export default function TrustBadges() {
   const features = [
     {
       icon: <BadgeCheck size={40} strokeWidth={1.5} />,
-      title: "100% Genuine ReveCulT Products",
-      desc: "Shop confidently knowing every ReveCult product is original and directly sourced, with full authenticity guaranteed.",
+      title: "100% Genuine REVE CULT Products",
+      desc: "Shop confidently knowing every REVE CULT product is original and directly sourced, with full authenticity guaranteed.",
     },
     {
       icon: <UserCircle2 size={40} strokeWidth={1.5} />,
-      title: "Officially Authorized Reseller",
-      desc: "ReveCult is an officially authorized reseller, ensuring genuine products and full warranty eligibility.",
+      title: "Officially Authorized ",
+      desc: "REVE CULT is an officially authorized, ensuring genuine products and full warranty eligibility.",
     },
     {
       icon: <Truck size={40} strokeWidth={1.5} />,
       title: "Fast & Secure Shipping",
-      desc: "Receive your ReveCult products quickly and safely with our fast, tracked delivery service, ensuring they arrive in perfect condition every time.",
+      desc: "Receive your REVE CULT products quickly and safely with our fast, tracked delivery service, ensuring they arrive in perfect condition every time.",
     },
     {
       icon: <HeadphonesIcon size={40} strokeWidth={1.5} />,

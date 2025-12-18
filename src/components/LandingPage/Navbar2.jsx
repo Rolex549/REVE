@@ -23,8 +23,8 @@ const Navbar2 = () => {
   const filteredProducts =
     query.length > 0
       ? products.filter((p) =>
-          p.name.toLowerCase().includes(query.toLowerCase())
-        )
+        p.name.toLowerCase().includes(query.toLowerCase())
+      )
       : [];
 
   const handleSelect = (id) => {
@@ -143,7 +143,13 @@ const Navbar2 = () => {
               className="cursor-pointer hover:text-pink-600"
             />
 
-            <User className="cursor-pointer hover:text-pink-600" />
+            <User
+              onClick={() => {
+                navigate("/profile");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="cursor-pointer hover:text-pink-600"
+            />
 
             <ShoppingCart
               onClick={() => {

@@ -7,6 +7,12 @@ import cultVideo from "../../assets/j1.mp4";
 export default function JoinTheCult() {
   const navigate = useNavigate();
 
+  const handleJoin = () => {
+    const user = localStorage.getItem("user");
+    navigate(user ? "/profile" : "/login");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="w-full mt-16 px-6">
       <div className="max-w-7xl mx-auto">
@@ -28,38 +34,35 @@ export default function JoinTheCult() {
           {/* CONTENT */}
           <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-6">
 
-            {/* 🔥 MAIN HEADING (Sound Focused) */}
+            {/* 🔥 MAIN HEADING */}
             <h2 className="text-4xl md:text-5xl font-extrabold mb-4">
               Join The Cult
             </h2>
 
             {/* 🔥 SUB HEADING */}
-            <p className="text-white/80 max-w-xl mb-5">
+            <p className="text-white/80 max-w-xl mb-6">
               Premium sound crafted with identity, comfort and emotion.  
               This is more than audio — it’s a movement.
             </p>
 
-            {/* 🔥 TRIMAN BRAND HIGHLIGHT */}
-            <div className="mb-8 px-5 py-2 rounded-full 
-                            bg-white/10 backdrop-blur 
-                            text-sm font-semibold tracking-wide">
-              A Brand by{" "}
-              <span className="text-pink-300 font-bold">
-                TRIMAN CULT TECH PVT LTD
-              </span>
-            </div>
-
-            {/* CTA */}
+            {/* 🔥 CTA BUTTON */}
             <button
-              onClick={() => navigate("/shop")}
-              className="px-10 py-3 bg-white text-black 
-                         rounded-xl font-semibold 
-                         hover:scale-105 transition"
+              onClick={() => {
+                navigate("/profile");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="
+                px-10 py-3
+                bg-white text-black
+                font-semibold rounded-full
+                hover:scale-105 hover:bg-gray-200
+                transition
+              "
             >
-              SHOP NOW
+              Join Now
             </button>
-          </div>
 
+          </div>
         </div>
       </div>
     </div>

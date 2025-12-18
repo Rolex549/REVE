@@ -37,6 +37,7 @@ import Rupay from "./components/payment/Rupay";
 import NetBanking from "./components/payment/NetBanking";
 import CashOnDelivery from "./components/payment/CashOnDelivery";
 import OrderSuccess from "./components/payment/OrderSuccess";
+import Profile from "./components/LandingPage/Profile";
 
 
 const App = () => {
@@ -70,6 +71,8 @@ const App = () => {
             <Route path="/support" element={<Support />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/profile" element={<Profile />} />
+
 
             {/* ================= SHOP CATEGORY ================= */}
             <Route path="/earbuds" element={<Earbuds />} />

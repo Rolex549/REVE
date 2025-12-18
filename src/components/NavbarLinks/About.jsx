@@ -98,18 +98,8 @@ export default function About() {
             Her Sound. Her Style. Her Story.
           </motion.p>
 
-          <motion.div
-            className="mt-5 inline-block px-5 py-2 rounded-full 
-                       bg-gradient-to-r from-pink-100 to-purple-100 
-                       text-pink-700 font-semibold text-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            A Brand by <strong>TRIMAN CULT TECH PVT LTD</strong>
-          </motion.div>
-
-          <div className="mt-10 flex justify-center gap-4 flex-wrap">
+          {/* ONLY OUR STORY BUTTON LEFT IN HERO */}
+          <div className="mt-10 flex justify-center">
             <button
               onClick={() =>
                 storyRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -121,18 +111,6 @@ export default function About() {
                          text-sm sm:text-base"
             >
               Our Story
-            </button>
-
-            <button
-              onClick={() =>
-                trimanRef.current?.scrollIntoView({ behavior: "smooth" })
-              }
-              className="px-6 py-3 rounded-full 
-                         bg-gradient-to-r from-pink-400 to-purple-400 
-                         text-white font-semibold
-                         text-sm sm:text-base"
-            >
-              Read TRIMAN CULT →
             </button>
           </div>
         </div>
@@ -209,40 +187,26 @@ export default function About() {
           </p>
         </div>
 
-        <div className="text-center">
+        {/* QUOTE + BRAND CREDIT */}
+        <div className="text-center space-y-4">
           <p className="text-2xl font-semibold">
             “Tech can be beautiful.  
             Tech can be feminine.  
             Tech can be HER style.”
           </p>
+
+          <div
+            className="inline-block px-6 py-2 rounded-full 
+                       bg-gradient-to-r from-pink-100 to-purple-100 
+                       text-pink-700 font-semibold text-sm"
+          >
+            A Brand by <strong>TRIMAN CULT TECH PVT LTD</strong>
+          </div>
         </div>
       </section>
 
       {/* ================= STORY SLIDES ================= */}
       <section className="max-w-6xl mx-auto px-6 py-20">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold">REVE in a Glance</h2>
-
-          <div className="flex gap-2 flex-wrap">
-            {STORY_SETS.map((s, i) => (
-              <button
-                key={s.key}
-                onClick={() => {
-                  setActiveSet(i);
-                  setActiveSlide(0);
-                }}
-                className={`px-4 py-1 rounded-full text-sm font-medium ${
-                  i === activeSet
-                    ? "bg-pink-600 text-white"
-                    : "bg-gray-100"
-                }`}
-              >
-                {s.title.split(" — ")[0]}
-              </button>
-            ))}
-          </div>
-        </div>
-
         <motion.div
           key={`${activeSet}-${activeSlide}`}
           initial={{ opacity: 0, y: 10 }}
@@ -277,6 +241,21 @@ export default function About() {
         ref={trimanRef}
         className="max-w-5xl mx-auto px-6 py-24 border-t"
       >
+        <div className="mb-10 flex justify-start">
+  <button
+    onClick={() =>
+      trimanRef.current?.scrollIntoView({ behavior: "smooth" })
+    }
+    className="px-7 py-3 rounded-full 
+               bg-gradient-to-r from-pink-400 to-purple-400 
+               text-white font-semibold
+               hover:scale-105 transition"
+  >
+    Read TRIMAN CULT →
+  </button>
+</div>
+
+
         <h2 className="text-4xl font-bold text-center mb-10">
           TRIMAN CULT — The Legacy
         </h2>
