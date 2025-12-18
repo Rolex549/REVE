@@ -28,17 +28,27 @@ import Earbuds from "./components/ShopLinks/Earbuds";
 /* ================= PRODUCT ================= */
 import ProductDetails from "./components/ProductDetails";
 
+/* ================= PAYMENT ================= */
+import Payment from "./components/payment/Payment";
+import UpiPayment from "./components/payment/UpiPayment";
+import DebitCard from "./components/payment/DebitCard";
+import CreditCard from "./components/payment/CreditCard";
+import Rupay from "./components/payment/Rupay";
+import NetBanking from "./components/payment/NetBanking";
+import CashOnDelivery from "./components/payment/CashOnDelivery";
+
 const App = () => {
   return (
     <CartProvider>
       <WishlistProvider>
         <Router>
 
-          {/* 🔹 NAVBAR (GLOBAL) */}
+          {/* ================= NAVBAR (GLOBAL) ================= */}
           <Navbar2 />
 
-          {/* 🔹 ROUTES */}
+          {/* ================= ROUTES ================= */}
           <Routes>
+
             {/* ================= HOME ================= */}
             <Route
               path="/"
@@ -65,6 +75,15 @@ const App = () => {
             {/* ================= PRODUCT DETAILS ================= */}
             <Route path="/product/:id" element={<ProductDetails />} />
 
+            {/* ================= PAYMENT FLOW ================= */}
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/payment/upi" element={<UpiPayment />} />
+            <Route path="/payment/debit" element={<DebitCard />} />
+            <Route path="/payment/credit" element={<CreditCard />} />
+            <Route path="/payment/rupay" element={<Rupay />} />
+            <Route path="/payment/netbanking" element={<NetBanking />} />
+            <Route path="/payment/cod" element={<CashOnDelivery />} />
+
             {/* ================= 404 ================= */}
             <Route
               path="*"
@@ -74,9 +93,10 @@ const App = () => {
                 </div>
               }
             />
+
           </Routes>
 
-          {/* 🔹 FOOTER (GLOBAL) */}
+          {/* ================= FOOTER (GLOBAL) ================= */}
           <Footer />
 
         </Router>

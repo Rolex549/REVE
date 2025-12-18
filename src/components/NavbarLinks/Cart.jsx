@@ -5,8 +5,9 @@ import { useEffect } from "react";
 
 export default function Cart() {
   const cartContext = useCart();
+  const navigate = useNavigate();
 
-  // ✅ SAFEST POSSIBLE WAY
+  // ✅ SAFEST WAY TO ACCESS CART
   const cart =
     cartContext?.cart ??
     cartContext?.cartItems ??
@@ -18,21 +19,19 @@ export default function Cart() {
     decreaseQty,
   } = cartContext || {};
 
-  const navigate = useNavigate();
-
-  // ✅ SCROLL TO TOP
+  // 🔝 Scroll to top
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  // ✅ TOTAL PRICE (NOW 100% SAFE)
+  // 💰 Total Amount
   const totalAmount = cart.reduce(
     (total, item) =>
       total + (item?.salePrice || 0) * (item?.quantity || 1),
     0
   );
 
-  // ✅ EMPTY CART UI
+  // ❌ EMPTY CART
   if (cart.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center text-center px-6">
@@ -58,7 +57,8 @@ export default function Cart() {
       <h1 className="text-4xl font-bold mb-10">My Cart 🛒</h1>
 
       <div className="grid lg:grid-cols-3 gap-10">
-        {/* CART ITEMS */}
+        
+        {/* ================= CART ITEMS ================= */}
         <div className="lg:col-span-2 space-y-6">
           {cart.map((item) => (
             <div
@@ -103,7 +103,7 @@ export default function Cart() {
 
               <button
                 onClick={() => removeFromCart?.(item.id)}
-                className="text-red-500"
+                className="text-red-500 hover:scale-110 transition"
               >
                 <Trash2 />
               </button>
@@ -111,7 +111,7 @@ export default function Cart() {
           ))}
         </div>
 
-        {/* SUMMARY */}
+        {/* ================= ORDER SUMMARY ================= */}
         <div className="bg-white p-6 rounded-2xl shadow-md h-fit">
           <h2 className="text-xl font-bold mb-4">Order Summary</h2>
 
@@ -127,7 +127,16 @@ export default function Cart() {
             </span>
           </div>
 
-          <button className="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl font-bold">
+          {/* ✅ PAYMENT NAVIGATION */}
+          <button
+            onClick={() => navigate("/payment")}
+            className="
+              w-full py-3
+              bg-gradient-to-r from-pink-500 to-purple-600
+              text-white rounded-xl font-bold
+              hover:scale-[1.02] transition
+            "
+          >
             Proceed to Checkout
           </button>
         </div>
