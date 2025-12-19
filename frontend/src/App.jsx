@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 /* ================= CONTEXT ================= */
+import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./components/LandingPage/CartContext";
 import { WishlistProvider } from "./components/LandingPage/WishlistContext";
 
@@ -38,10 +39,17 @@ import NetBanking from "./components/payment/NetBanking";
 import CashOnDelivery from "./components/payment/CashOnDelivery";
 import OrderSuccess from "./components/payment/OrderSuccess";
 import Profile from "./components/LandingPage/Profile";
+import Login from "./components/auth/Login";
+import Register from "./components/auth/Register";
+import VerifyEmail from "./components/auth/VerifyEmail";
 
+/* ================= ADMIN ================= */
+import AdminPanel from "./components/Admin/AdminPanel";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const App = () => {
   return (
+    <AuthProvider>
     <CartProvider>
       <WishlistProvider>
         <Router>
@@ -51,6 +59,13 @@ const App = () => {
 
           {/* ================= ROUTES ================= */}
           <Routes>
+            {/* ================= AUTH ================= */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
+
+            {/* ================= ADMIN ================= */}
+            <Route path="/admin" element={<ErrorBoundary><AdminPanel /></ErrorBoundary>} />
 
             {/* ================= HOME ================= */}
             <Route
@@ -109,6 +124,7 @@ const App = () => {
         </Router>
       </WishlistProvider>
     </CartProvider>
+    </AuthProvider>
   );
 };
 

@@ -1,0 +1,137 @@
+const mongoose = require('mongoose');
+const Product = require('../models/Product');
+const Category = require('../models/Category');
+const Review = require('../models/Review');
+const asyncHandler = require('../utils/asyncHandler');
+
+const buildQuery = (query) => {
+  const filter = { isActive: true };
+  if (query.search) filter.name = { $regex: query.search, $options: 'i' };
+  if (query.category) filter.category = query.category;
+  if (query.subCategory) filter.subCategory = query.subCategory;
+  if (query.minPrice || query.maxPrice) {
+    filter.price = {};
+    if (query.minPrice) filter.price.$gte = Number(query.minPrice);
+    if (query.maxPrice) filter.price.$lte = Number(query.maxPrice);
+  }
+  return filter;
+};
+
+const listProducts = asyncHandler(async (req, res) => {
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 12;
+  const sort = req.query.sort || '-createdAt';
+  const filter = buildQuery(req.query);
+
+  const [items, count] = await Promise.all([
+    Product.find(filter)
+      .populate('category subCategory')
+      .sort(sort)
+      .skip((page - 1) * limit)
+      .limit(limit),
+    Product.countDocuments(filter)
+  ]);
+
+  res.json({
+    data: items,
+    pagination: { page, limit, total: count, pages: Math.ceil(count / limit) }
+  });
+});
+
+const getProduct = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id)
+    .populate('category subCategory');
+  if (!product) return res.status(404).json({ message: 'Product not found' });
+  const reviews = await Review.find({ product: product._id }).populate('user', 'name');
+  res.json({ product, reviews });
+});
+
+const createProduct = asyncHandler(async (req, res) => {
+  // Basic validation
+  const { name, price } = req.body;
+  if (!name || !price) {
+    return res.status(400).json({ message: 'Name and price are required' });
+  }
+
+  const product = await Product.create({
+    ...req.body,
+    price: Number(price),
+    images: (req.files || []).map((file) => ({
+      url: file.path || file.secure_url,
+      publicId: file.filename || file.public_id
+    }))
+  });
+  res.status(201).json(product);
+});
+
+const updateProduct = asyncHandler(async (req, res) => {
+  const updates = { ...req.body };
+  if (req.files?.length) {
+    updates.$push = {
+      images: req.files.map((file) => ({
+        url: file.path || file.secure_url,
+        publicId: file.filename || file.public_id
+      }))
+    };
+  }
+  const product = await Product.findByIdAndUpdate(req.params.id, updates, { new: true });
+  if (!product) return res.status(404).json({ message: 'Product not found' });
+  res.json(product);
+});
+
+const deleteProduct = asyncHandler(async (req, res) => {
+  await Product.findByIdAndDelete(req.params.id);
+  res.json({ message: 'Product deleted' });
+});
+
+const createCategory = asyncHandler(async (req, res) => {
+  const category = await Category.create(req.body);
+  res.status(201).json(category);
+});
+
+const listCategories = asyncHandler(async (_req, res) => {
+  // populate parent names for better display in admin UI
+  const categories = await Category.find().populate('parent', 'name');
+  res.json(categories);
+});
+
+const addReview = asyncHandler(async (req, res) => {
+  const { rating, comment } = req.body;
+  const productId = req.params.id;
+
+  const existing = await Review.findOne({ product: productId, user: req.user._id });
+  if (existing) return res.status(400).json({ message: 'You already reviewed this product' });
+
+  await Review.create({
+    product: productId,
+    user: req.user._id,
+    rating,
+    comment
+  });
+
+  const stats = await Review.aggregate([
+    { $match: { product: new mongoose.Types.ObjectId(productId) } },
+    { $group: { _id: '$product', avgRating: { $avg: '$rating' }, total: { $sum: 1 } } }
+  ]);
+
+  if (stats.length) {
+    await Product.findByIdAndUpdate(productId, {
+      averageRating: stats[0].avgRating,
+      totalReviews: stats[0].total
+    });
+  }
+
+  res.status(201).json({ message: 'Review added' });
+});
+
+module.exports = {
+  listProducts,
+  getProduct,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  createCategory,
+  listCategories,
+  addReview
+};
+
