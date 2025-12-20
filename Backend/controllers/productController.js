@@ -74,6 +74,20 @@ const updateProduct = asyncHandler(async (req, res) => {
       }))
     };
   }
+const updateCategory = asyncHandler(async (req, res) => {
+  const category = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  if (!category) return res.status(404).json({ message: 'Category not found' });
+  res.json(category);
+});
+
+const deleteCategory = asyncHandler(async (req, res) => {
+  await Category.findByIdAndDelete(req.params.id);
+  res.json({ message: 'Category deleted' });
+});
+
+
+
+
   const product = await Product.findByIdAndUpdate(req.params.id, updates, { new: true });
   if (!product) return res.status(404).json({ message: 'Product not found' });
   res.json(product);
@@ -131,6 +145,8 @@ module.exports = {
   updateProduct,
   deleteProduct,
   createCategory,
+  updateCategory,
+  deleteCategory,
   listCategories,
   addReview
 };

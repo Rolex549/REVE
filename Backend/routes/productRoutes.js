@@ -46,7 +46,8 @@ router.put('/:id',
 router.delete('/:id', auth, adminOnly, deleteProduct);
 
 router.post('/categories', auth, adminOnly, [body('name').notEmpty()], validateRequest, createCategory);
-
+router.put('/categories/:id', auth, adminOnly, validateRequest, updateCategory);
+router.delete('/categories/:id', auth, adminOnly, deleteCategory);
 module.exports = router;
 
 

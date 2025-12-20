@@ -29,11 +29,11 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-productSchema.pre('save', function setSlug(next) {
+productSchema.pre('save', function setSlug() {
   if (this.isModified('name')) {
     this.slug = slugify(this.name, { lower: true, strict: true });
   }
-  next();
+
 });
 
 module.exports = mongoose.model('Product', productSchema);

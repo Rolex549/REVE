@@ -4,6 +4,7 @@ import { adminAPI } from '../../config/api';
 import { useNavigate } from 'react-router-dom';
 import AdminProductForm from './AdminProductForm';
 import AddCategoryForm from './AddCategoryForm';
+import OrderDetailsModal from './OrderDetailsModal';
 
 
 const AdminPanel = () => {
@@ -17,7 +18,10 @@ const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(true);
   const [showAddProduct, setShowAddProduct] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
   const [showAddCategory, setShowAddCategory] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     if (!isAdmin) {
@@ -112,6 +116,28 @@ const AdminPanel = () => {
     }
   };
 
+  const handleDeleteProduct = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this product?')) return;
+    try {
+      await adminAPI.deleteProduct(id);
+      loadProducts();
+    } catch (error) {
+      console.error('Failed to delete product:', error);
+      alert('Failed to delete product');
+    }
+  };
+
+  const handleDeleteCategory = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this category?')) return;
+    try {
+      await adminAPI.deleteCategory(id);
+      loadCategories();
+    } catch (error) {
+      console.error('Failed to delete category:', error);
+      alert('Failed to delete category');
+    }
+  };
+
   if (!isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -200,19 +226,19 @@ const AdminPanel = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="bg-white p-6 rounded-xl shadow-sm">
                 <h3 className="text-gray-500 text-sm font-medium">Total Users</h3>
-                <p className="text-3xl font-bold mt-2">{dashboard.totalUsers}</p>
+                <p className="text-3xl font-bold mt-2">{dashboard.totals?.users || 0}</p>
               </div>
               <div className="bg-white p-6 rounded-xl shadow-sm">
                 <h3 className="text-gray-500 text-sm font-medium">Total Orders</h3>
-                <p className="text-3xl font-bold mt-2">{dashboard.totalOrders}</p>
+                <p className="text-3xl font-bold mt-2">{dashboard.totals?.orders || 0}</p>
               </div>
               <div className="bg-white p-6 rounded-xl shadow-sm">
                 <h3 className="text-gray-500 text-sm font-medium">Total Products</h3>
-                <p className="text-3xl font-bold mt-2">{dashboard.totalProducts}</p>
+                <p className="text-3xl font-bold mt-2">{dashboard.totals?.products || 0}</p>
               </div>
               <div className="bg-white p-6 rounded-xl shadow-sm">
                 <h3 className="text-gray-500 text-sm font-medium">Revenue</h3>
-                <p className="text-3xl font-bold mt-2">₹{(dashboard.totalRevenue ?? 0).toLocaleString()}</p>
+                <p className="text-3xl font-bold mt-2">₹{(dashboard.totals?.revenue ?? 0).toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -284,6 +310,12 @@ const AdminPanel = () => {
                       <p className="text-sm text-gray-600 mt-1">{order.user?.email}</p>
                     </div>
                     <div className="flex items-center gap-4">
+                      <button
+                        onClick={() => setSelectedOrder(order)}
+                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        View Details
+                      </button>
                       <select
                         value={order.status}
                         onChange={(e) => handleUpdateOrderStatus(order._id, e.target.value)}
@@ -321,7 +353,10 @@ const AdminPanel = () => {
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold text-gray-800">Categories</h2>
               <button
-                onClick={() => setShowAddCategory(true)}
+                onClick={() => {
+                  setEditingCategory(null);
+                  setShowAddCategory(true);
+                }}
                 className="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700"
               >
                 Add Category
@@ -356,7 +391,10 @@ const AdminPanel = () => {
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold text-gray-800">Products Management</h2>
               <button 
-                onClick={() => setShowAddProduct(true)}
+                onClick={() => {
+                  setEditingProduct(null);
+                  setShowAddProduct(true);
+                }}
                 className="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700"
               >
                 Add Product
@@ -366,12 +404,29 @@ const AdminPanel = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {products.map((p) => (
                 <div key={p._id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                  <div className="aspect-square bg-gray-100 rounded-lg mb-4 overflow-hidden">
+                  <div className="aspect-square bg-gray-100 rounded-lg mb-4 overflow-hidden relative group">
                     <img 
                       src={p.images[0]?.url || 'placeholder.jpg'} 
                       alt={p.name}
                       className="w-full h-full object-cover"
                     />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                       <button
+                          onClick={() => {
+                            setEditingProduct(p);
+                            setShowAddProduct(true);
+                          }}
+                          className="bg-white text-blue-600 px-3 py-1 rounded-full text-sm font-medium hover:bg-blue-50"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProduct(p._id)}
+                          className="bg-white text-red-600 px-3 py-1 rounded-full text-sm font-medium hover:bg-red-50"
+                        >
+                          Delete
+                        </button>
+                    </div>
                   </div>
                   <h3 className="font-medium text-gray-900 truncate">{p.name}</h3>
                   <div className="flex justify-between items-center mt-2">

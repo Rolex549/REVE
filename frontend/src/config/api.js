@@ -128,4 +128,6 @@ export const adminAPI = {
   // Category management
   getCategories: () => apiCall('/products/categories'),
   createCategory: (data) => apiCall('/admin/categories', { method: 'POST', body: data }),
+    updateCategory: (id, data) => apiCall(`/products/categories/${id}`, { method: 'PUT', body: data }),
+  deleteCategory: (id) => apiCall(`/products/categories/${id}`, { method: 'DELETE' }),
 };

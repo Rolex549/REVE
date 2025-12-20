@@ -4,9 +4,10 @@ const Product = require('../models/Product');
 const asyncHandler = require('../utils/asyncHandler');
 
 const dashboard = asyncHandler(async (_req, res) => {
-  const [users, orders, revenue] = await Promise.all([
+  const [users, orders, products, revenue] = await Promise.all([
     User.countDocuments(),
     Order.countDocuments(),
+    Product.countDocuments(),
     Order.aggregate([
       { $group: { _id: null, total: { $sum: '$totals.grandTotal' } } }
     ])
@@ -16,6 +17,7 @@ const dashboard = asyncHandler(async (_req, res) => {
     totals: {
       users,
       orders,
+      products,
       revenue: revenue[0]?.total || 0
     },
     recentOrders
