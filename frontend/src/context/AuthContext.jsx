@@ -37,6 +37,18 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
+  // Allows other components to refresh the current user profile (e.g., after editing addresses)
+  const refreshProfile = async () => {
+    try {
+      const profile = await userAPI.getProfile();
+      if (profile?.user) setUser(profile.user);
+      return profile?.user;
+    } catch (err) {
+      console.error('Failed to refresh profile:', err);
+      return null;
+    }
+  };
+
   const login = async (email, password) => {
     try {
       const response = await authAPI.login({ email, password });
@@ -96,6 +108,7 @@ export const AuthProvider = ({ children }) => {
     googleLogin,
     register,
     logout,
+    refreshProfile,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin',
   };

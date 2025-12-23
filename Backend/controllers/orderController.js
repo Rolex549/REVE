@@ -55,19 +55,30 @@ const createOrder = asyncHandler(async (req, res) => {
     totals: { subtotal, tax, shipping, discount, grandTotal }
   });
 
-  await sendOrderConfirmation(req.user, order);
+  // Attempt to send confirmation email but don't fail the order creation if email fails
+  try {
+    await sendOrderConfirmation(req.user, order);
+  } catch (err) {
+    console.error('Order confirmation email failed:', err?.message || err);
+  }
+
   await Cart.findOneAndUpdate({ user: req.user._id }, { items: [], subtotal: 0 });
 
   res.status(201).json(order);
 });
 
 const getOrderHistory = asyncHandler(async (req, res) => {
-  const orders = await Order.find({ user: req.user._id }).sort('-createdAt');
+  const orders = await Order.find({ user: req.user._id })
+    .populate('items.product', 'name price images')
+    .sort('-createdAt');
   res.json(orders);
 });
 
 const getAllOrders = asyncHandler(async (_req, res) => {
-  const orders = await Order.find().populate('user', 'name email').sort('-createdAt');
+  const orders = await Order.find()
+    .populate('user', 'name email')
+    .populate('items.product', 'name price images')
+    .sort('-createdAt');
   res.json(orders);
 });
 

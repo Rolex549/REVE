@@ -42,6 +42,8 @@ import Profile from "./components/LandingPage/Profile";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import VerifyEmail from "./components/auth/VerifyEmail";
+import ForgotPassword from "./components/auth/ForgotPassword";
+import ResetPassword from "./components/auth/ResetPassword";
 
 /* ================= ADMIN ================= */
 import AdminPanel from "./components/Admin/AdminPanel";
@@ -62,6 +64,8 @@ const App = () => {
             {/* ================= AUTH ================= */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
 
             {/* ================= ADMIN ================= */}

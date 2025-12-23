@@ -12,7 +12,7 @@ const dashboard = asyncHandler(async (_req, res) => {
       { $group: { _id: null, total: { $sum: '$totals.grandTotal' } } }
     ])
   ]);
-  const recentOrders = await Order.find().sort('-createdAt').limit(5);
+  const recentOrders = await Order.find().populate('user', 'name email').populate('items.product', 'name price images').sort('-createdAt').limit(5);
   res.json({
     totals: {
       users,
@@ -40,7 +40,7 @@ const setUserBlock = asyncHandler(async (req, res) => {
 });
 
 const listOrders = asyncHandler(async (_req, res) => {
-  const orders = await Order.find().populate('user', 'name email').sort('-createdAt');
+  const orders = await Order.find().populate('user', 'name email').populate('items.product', 'name price images').sort('-createdAt');
   res.json(orders);
 });
 

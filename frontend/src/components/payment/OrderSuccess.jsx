@@ -1,14 +1,17 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useCart } from "../LandingPage/CartContext";
 
 export default function OrderSuccess() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { clearCart } = useCart();
+  const orderNumber = location.state?.orderNumber;
 
   useEffect(() => {
+    // clearCart should be idempotent; also sometimes we clear it when navigating here
     clearCart?.(); // 🧹 clear cart after order
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
@@ -50,6 +53,9 @@ export default function OrderSuccess() {
           Thank you for shopping with <b>REVE CULT</b> 💖  
           <br />
           Your order will be delivered soon.
+          {orderNumber && (
+            <div className="mt-3 font-medium text-gray-700">Order Number: <span className="text-pink-600">{orderNumber}</span></div>
+          )}
         </motion.p>
 
         {/* 🎯 Buttons */}

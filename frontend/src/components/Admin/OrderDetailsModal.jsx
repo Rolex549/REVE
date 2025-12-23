@@ -20,11 +20,11 @@ const OrderDetailsModal = ({ order, onClose }) => {
             <p><span className="font-medium">Date:</span> {new Date(order.createdAt).toLocaleString()}</p>
             <p><span className="font-medium">Status:</span> 
               <span className={`ml-2 px-2 py-1 rounded text-sm ${
-                order.status === 'Delivered' ? 'bg-green-100 text-green-800' :
-                order.status === 'Cancelled' ? 'bg-red-100 text-red-800' :
+                order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
                 'bg-yellow-100 text-yellow-800'
               }`}>
-                {order.status}
+                {order.status ? (order.status.charAt(0).toUpperCase() + order.status.slice(1)) : ''}
               </span>
             </p>
           </div>
@@ -101,19 +101,19 @@ const OrderDetailsModal = ({ order, onClose }) => {
           <div className="w-64 space-y-2">
             <div className="flex justify-between">
               <span>Subtotal:</span>
-              <span>₹{order.totals?.subtotal || 0}</span>
+              <span>₹{(order.totals?.subtotal ?? 0).toLocaleString()}</span>
             </div>
              <div className="flex justify-between">
               <span>Shipping:</span>
-              <span>₹{order.totals?.shipping || 0}</span>
+              <span>₹{(order.totals?.shipping ?? 0).toLocaleString()}</span>
             </div>
              <div className="flex justify-between">
               <span>Tax:</span>
-              <span>₹{order.totals?.tax || 0}</span>
+              <span>₹{(order.totals?.tax ?? 0).toLocaleString()}</span>
             </div>
             <div className="flex justify-between font-bold text-lg border-t pt-2">
               <span>Grand Total:</span>
-              <span>₹{order.totals?.grandTotal || order.totalAmount || 0}</span>
+              <span>₹{((order.totals?.grandTotal ?? order.totalAmount ?? 0)).toLocaleString()}</span>
             </div>
           </div>
         </div>

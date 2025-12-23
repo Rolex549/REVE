@@ -320,18 +320,18 @@ const AdminPanel = () => {
                         value={order.status}
                         onChange={(e) => handleUpdateOrderStatus(order._id, e.target.value)}
                         className={`px-3 py-1 rounded-lg text-sm font-medium border-none outline-none ${
-                          order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
-                          order.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                          order.status === 'delivered' ? 'bg-green-100 text-green-700' :
+                          order.status === 'cancelled' ? 'bg-red-100 text-red-700' :
                           'bg-yellow-100 text-yellow-700'
                         }`}
                       >
-                        <option value="Pending">Pending</option>
-                        <option value="Processing">Processing</option>
-                        <option value="Shipped">Shipped</option>
-                        <option value="Delivered">Delivered</option>
-                        <option value="Cancelled">Cancelled</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
                       </select>
-                      <span className="font-bold text-lg">₹{order.totalAmount}</span>
+                      <span className="font-bold text-lg">₹{order.totals?.grandTotal || order.payment?.amount || 0}</span>
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -466,6 +466,11 @@ const AdminPanel = () => {
             />
           </div>
         </div>
+      )}
+
+      {/* Order Details Modal */}
+      {selectedOrder && (
+        <OrderDetailsModal order={selectedOrder} onClose={() => setSelectedOrder(null)} />
       )}
     </div>
   );

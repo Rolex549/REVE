@@ -78,6 +78,12 @@ export const authAPI = {
 export const userAPI = {
   getProfile: () => apiCall('/users/me'),
   updateProfile: (data) => apiCall('/users/me', { method: 'PUT', body: data }),
+  // Address management
+  addAddress: (data) => apiCall('/users/addresses', { method: 'POST', body: data }),
+  updateAddress: (id, data) => apiCall(`/users/addresses/${id}`, { method: 'PUT', body: data }),
+  deleteAddress: (id) => apiCall(`/users/addresses/${id}`, { method: 'DELETE' }),
+  // Orders for current user
+  getOrders: () => apiCall('/users/orders'),
 };
 
 // Product API
