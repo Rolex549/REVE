@@ -17,6 +17,23 @@ const buildQuery = (query) => {
   return filter;
 };
 
+// Utility: accept features in multiple formats (array, comma/newline-separated string, or description fallbacks)
+const parseFeatures = (input) => {
+  if (!input) return [];
+  if (Array.isArray(input)) return input.map((s) => String(s).trim()).filter(Boolean);
+  if (typeof input === 'string') {
+    // Try newline split first
+    const byNewline = input.split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+    if (byNewline.length > 1) return byNewline;
+    // Try comma split
+    const byComma = input.split(',').map((s) => s.trim()).filter(Boolean);
+    if (byComma.length > 1) return byComma;
+    // Fallback to sentence split
+    return input.split(/[.?!]\s+/).map((s) => s.trim()).filter(Boolean);
+  }
+  return [];
+};
+
 const listProducts = asyncHandler(async (req, res) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 12;
@@ -53,9 +70,13 @@ const createProduct = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: 'Name and price are required' });
   }
 
+  // Normalize features: accept features[] or features string or fallback to description
+  const features = parseFeatures(req.body.features ?? req.body.description);
+
   const product = await Product.create({
     ...req.body,
     price: Number(price),
+    features,
     images: (req.files || []).map((file) => ({
       url: file.path || file.secure_url,
       publicId: file.filename || file.public_id
@@ -66,6 +87,12 @@ const createProduct = asyncHandler(async (req, res) => {
 
 const updateProduct = asyncHandler(async (req, res) => {
   const updates = { ...req.body };
+
+  // Normalize features if provided (or fallback from description)
+  if (req.body.features !== undefined || req.body.description !== undefined) {
+    updates.features = parseFeatures(req.body.features ?? req.body.description);
+  }
+
   if (req.files?.length) {
     updates.$push = {
       images: req.files.map((file) => ({
@@ -74,6 +101,16 @@ const updateProduct = asyncHandler(async (req, res) => {
       }))
     };
   }
+
+
+
+
+
+  const product = await Product.findByIdAndUpdate(req.params.id, updates, { new: true });
+  if (!product) return res.status(404).json({ message: 'Product not found' });
+  res.json(product);
+});
+
 const updateCategory = asyncHandler(async (req, res) => {
   const category = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true });
   if (!category) return res.status(404).json({ message: 'Category not found' });
@@ -84,15 +121,6 @@ const deleteCategory = asyncHandler(async (req, res) => {
   await Category.findByIdAndDelete(req.params.id);
   res.json({ message: 'Category deleted' });
 });
-
-
-
-
-  const product = await Product.findByIdAndUpdate(req.params.id, updates, { new: true });
-  if (!product) return res.status(404).json({ message: 'Product not found' });
-  res.json(product);
-});
-
 const deleteProduct = asyncHandler(async (req, res) => {
   await Product.findByIdAndDelete(req.params.id);
   res.json({ message: 'Product deleted' });

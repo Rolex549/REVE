@@ -13,7 +13,10 @@ const productSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     slug: { type: String, unique: true },
-    description: { type: String, required: true },
+    // legacy free-form description retained for compatibility (optional)
+    description: { type: String },
+    // New structured features array (preferred)
+    features: { type: [String], default: [] },
     price: { type: Number, required: true },
     salePrice: Number,
     currency: { type: String, default: 'USD' },

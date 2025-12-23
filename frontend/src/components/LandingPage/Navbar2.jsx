@@ -6,27 +6,46 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../assets/logo.jpg";
-
-// ✅ products import
-import products from "../products";
+import { productAPI } from "../../config/api";
 
 const Navbar2 = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [mobileSearch, setMobileSearch] = useState(false);
   const [query, setQuery] = useState("");
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    productAPI
+      .getProducts({ limit: 100 })
+      .then((res) => {
+        if (!mounted) return;
+        setItems((res && res.data) || []);
+      })
+      .catch(() => {})
+      .finally(() => mounted && setLoading(false));
+
+    return () => (mounted = false);
+  }, []);
 
   // 🔍 FILTER PRODUCTS
   const filteredProducts =
     query.length > 0
-      ? products.filter((p) =>
-        p.name.toLowerCase().includes(query.toLowerCase())
-      )
+      ? items
+          .map((p) => ({
+            id: p._id,
+            name: p.name,
+            salePrice: p.salePrice ?? p.price,
+            image: p.images?.[0]?.url || "/placeholder.png",
+          }))
+          .filter((p) => p.name.toLowerCase().includes(query.toLowerCase()))
       : [];
-
   const handleSelect = (id) => {
     setQuery("");
     setMobileSearch(false);

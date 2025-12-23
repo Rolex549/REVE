@@ -5,7 +5,7 @@ import { productAPI } from '../../config/api';
 const AdminProductForm = ({ onClose, onCreated }) => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
+  const [features, setFeatures] = useState('');
   const [stock, setStock] = useState(0);
   const [category, setCategory] = useState('');
   const [images, setImages] = useState([]);
@@ -40,7 +40,7 @@ const AdminProductForm = ({ onClose, onCreated }) => {
     const form = new FormData();
     form.append('name', name);
     form.append('price', price);
-    form.append('description', description);
+    if (features) form.append('features', features);
     form.append('stock', String(stock));
     if (category) form.append('category', category);
     images.forEach((file) => form.append('images', file));
@@ -83,9 +83,9 @@ const AdminProductForm = ({ onClose, onCreated }) => {
 
           <textarea
             className="border p-2 rounded"
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Features (one per line or comma separated)"
+            value={features}
+            onChange={(e) => setFeatures(e.target.value)}
           />
 
           <input

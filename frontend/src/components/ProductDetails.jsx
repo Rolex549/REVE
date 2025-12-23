@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import products from "./products";
+import { productAPI } from "../config/api";
 import {
   ArrowLeft,
   Star,
@@ -23,13 +23,55 @@ export default function ProductDetails() {
   // ✅ SAME AS SHOP.JSX
   const [addedToCart, setAddedToCart] = useState(false);
 
-  // Scroll to top
+  // Scroll to top and fetch product
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+    let mounted = true;
+    setLoading(true);
+    productAPI
+      .getProduct(id)
+      .then((res) => {
+        if (!mounted) return;
+        const p = res && res.product ? res.product : res;
+        // Client-side fallback parsing: use p.features if present, otherwise try description or tags
+        const parseDescToFeatures = (desc) => {
+          if (!desc) return [];
+          const byNewline = desc.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+          if (byNewline.length > 1) return byNewline;
+          const byComma = desc.split(',').map(s => s.trim()).filter(Boolean);
+          if (byComma.length > 1) return byComma;
+          return desc.split(/[.?!]\s+/).map(s => s.trim()).filter(Boolean);
+        };
 
-  const product = products.find((p) => p.id === Number(id));
+        setProduct({
+          id: p._id,
+          name: p.name,
+          salePrice: p.salePrice ?? p.price,
+          image: p.images?.[0]?.url || "/placeholder.png",
+          rating: p.averageRating,
+          reviews: p.totalReviews,
+          features: Array.isArray(p.features) && p.features.length ? p.features : (p.description ? parseDescToFeatures(p.description) : (p.tags || [])),
+          description: p.description,
+        });
+      })
+      .catch((err) => {
+        if (!mounted) return;
+        setError(err.message || String(err));
+      })
+      .finally(() => mounted && setLoading(false));
 
+    return () => (mounted = false);
+  }, [id]);
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading…</div>;
+  if (error)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>
+    );
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center text-xl font-semibold">

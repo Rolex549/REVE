@@ -1,10 +1,10 @@
-import { useState, memo } from "react";
+import { useState, memo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, ArrowLeft, Sparkles, Heart } from "lucide-react";
 import { useCart } from "../LandingPage/CartContext";
 import { useWishlist } from "../LandingPage/WishlistContext";
 import { useNavigate } from "react-router-dom";
-import products from "../products";
+import { productAPI } from "../../config/api";
 
 /* ================= PRODUCT CARD ================= */
 const ProductCard = memo(
@@ -125,6 +125,28 @@ export default function Shop() {
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const navigate = useNavigate();
 
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    productAPI
+      .getProducts({ limit: 24 })
+      .then((res) => {
+        if (!mounted) return;
+        setItems((res && res.data) || []);
+      })
+      .catch((err) => {
+        if (!mounted) return;
+        setError(err.message || String(err));
+      })
+      .finally(() => mounted && setLoading(false));
+
+    return () => (mounted = false);
+  }, []);
+
   const handleAddToCart = (product) => {
     addToCart(product);
     setAddedToCart((prev) => ({ ...prev, [product.id]: true }));
@@ -144,6 +166,15 @@ export default function Shop() {
 
   const isWishlisted = (id) =>
     wishlist.some((item) => item.id === id);
+
+  const normalize = (p) => ({
+    id: p._id,
+    name: p.name,
+    salePrice: p.salePrice ?? p.price,
+    image: p.images?.[0]?.url || "/placeholder.png",
+    rating: p.averageRating,
+    reviews: p.totalReviews,
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-white">
@@ -181,19 +212,22 @@ export default function Shop() {
 
       {/* PRODUCTS GRID */}
       <div className="max-w-7xl mx-auto px-6 pb-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onAddToCart={() => handleAddToCart(product)}
-            onToggleWishlist={() => toggleWishlist(product)}
-            onViewDetails={() => setSelectedProduct(product)}
-            isAdded={addedToCart[product.id]}
-            isWishlisted={isWishlisted(product.id)}
-            isHovered={hoveredProduct === product.id}
-            onHover={setHoveredProduct}
-          />
-        ))}
+        {items.map((p) => {
+          const product = normalize(p);
+          return (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onAddToCart={() => handleAddToCart(product)}
+              onToggleWishlist={() => toggleWishlist(product)}
+              onViewDetails={() => setSelectedProduct(product)}
+              isAdded={!!addedToCart[product.id]}
+              isWishlisted={isWishlisted(product.id)}
+              isHovered={hoveredProduct === product.id}
+              onHover={setHoveredProduct}
+            />
+          );
+        })}
       </div>
     </div>
   );

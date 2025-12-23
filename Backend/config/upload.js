@@ -2,15 +2,15 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 
-const useCloudinary = !!process.env.CLOUDINARY_CLOUD_NAME;
+const useCloudinary = !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET);
 
 let storage;
 
 if (useCloudinary) {
   try {
-    const { CloudinaryStorage } = require('multer-storage-cloudinary');
+    const cloudinaryStorage = require('multer-storage-cloudinary');
     const cloudinary = require('./cloudinary');
-    storage = new CloudinaryStorage({
+    storage = cloudinaryStorage({
       cloudinary,
       params: {
         folder: process.env.CLOUDINARY_FOLDER || 'ecommerce',
@@ -18,7 +18,8 @@ if (useCloudinary) {
       }
     });
   } catch (error) {
-    console.warn('Cloudinary not configured, using local storage');
+    console.warn('Cloudinary not configured or failed to initialize, using local storage');
+    console.error('Cloudinary initialization error:', error && error.message ? error.message : error);
   }
 }
 

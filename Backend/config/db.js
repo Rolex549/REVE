@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const connectDb = async () => {
-  const uri = process.env.MONGODB_URI;
+  const uri = process.env.MONGODB_URI ||  "mongodb://127.0.0.1:27017/ReveCult ";
 
   if (!uri) {
     throw new Error('MONGODB_URI is not set');

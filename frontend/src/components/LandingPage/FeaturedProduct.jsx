@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import products from "../products";
+import { productAPI } from "../../config/api";
 
 // 🎥 VIDEOS
 import video1 from "../../assets/v1.mp4";
@@ -10,6 +10,34 @@ import video3 from "../../assets/v3.mp4";
 
 export default function FeaturedProduct() {
   const navigate = useNavigate();
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    productAPI
+      .getProducts({ limit: 4 })
+      .then((res) => {
+        if (!mounted) return;
+        setItems((res && res.data) || []);
+      })
+      .catch((err) => {
+        if (!mounted) return;
+        setError(err.message || String(err));
+      })
+      .finally(() => mounted && setLoading(false));
+
+    return () => (mounted = false);
+  }, []);
+
+  const normalize = (p) => ({
+    id: p._id,
+    name: p.name,
+    salePrice: p.salePrice ?? p.price,
+    image: p.images?.[0]?.url || "/placeholder.png",
+  });
 
   return (
     <div className="w-full mt-10 px-6 py-10">
@@ -18,38 +46,43 @@ export default function FeaturedProduct() {
       <h1 className="text-4xl font-bold mb-10">Recommended</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-        {products.slice(0, 4).map((item) => (
-          <motion.div
-            key={item.id}
-            onClick={() => navigate(`/product/${item.id}`)}
-            className="group p-6 rounded-xl border bg-white cursor-pointer"
-            whileHover={{ y: -6 }}
-          >
-            <div className="w-full h-40 flex items-center justify-center mb-4">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-full h-full object-contain"
-              />
-            </div>
-
-            <p className="text-lg font-semibold">{item.name}</p>
-
-            <p className="text-md font-bold mt-2 text-pink-600">
-              Rs. {item.salePrice}
-            </p>
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/product/${item.id}`);
-              }}
-              className="hidden group-hover:block w-full mt-3 py-2 rounded-lg font-semibold border hover:bg-black hover:text-white"
+        {loading && <div className="text-center">Loading...</div>}
+        {!loading && error && <div className="text-red-500">{error}</div>}
+        {!loading && !error && items.map((item) => {
+          const it = normalize(item);
+          return (
+            <motion.div
+              key={it.id}
+              onClick={() => navigate(`/product/${it.id}`)}
+              className="group p-6 rounded-xl border bg-white cursor-pointer"
+              whileHover={{ y: -6 }}
             >
-              VIEW DETAILS
-            </button>
-          </motion.div>
-        ))}
+              <div className="w-full h-40 flex items-center justify-center mb-4">
+                <img
+                  src={it.image}
+                  alt={it.name}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+
+              <p className="text-lg font-semibold">{it.name}</p>
+
+              <p className="text-md font-bold mt-2 text-pink-600">
+                Rs. {it.salePrice}
+              </p>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/product/${it.id}`);
+                }}
+                className="hidden group-hover:block w-full mt-3 py-2 rounded-lg font-semibold border hover:bg-black hover:text-white"
+              >
+                VIEW DETAILS
+              </button>
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* ================= 3 VIDEO SECTIONS (SIDE BY SIDE) ================= */}
